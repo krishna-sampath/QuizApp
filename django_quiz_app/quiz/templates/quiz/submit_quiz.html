@@ -1,0 +1,19 @@
+<!-- quiz/templates/quiz/submit_quiz.html -->
+
+{% extends 'quiz/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Quiz Completed!</h2>
+    <p>Your performance summary:</p>
+    <ul class="list-group mt-3">
+        <li class="list-group-item">Total Correct Answers: {{ total_correct }}</li>
+        <li class="list-group-item">Total Incorrect Answers: {{ total_incorrect }}</li>
+    </ul>
+    <div class="mt-4">
+        <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+        <a href="{% url 'history' %}" class="btn btn-secondary">View History</a>
+    </div>
+</div>
+{% endblock %}

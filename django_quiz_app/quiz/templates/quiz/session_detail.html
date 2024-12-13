@@ -1,0 +1,68 @@
+<!-- quiz/templates/quiz/session_detail.html -->
+
+{% extends 'quiz/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Session {{ session.id }} Details</h2>
+    <p><strong>Date:</strong> {{ session.start_time }}</p>
+    <table class="table table-bordered mt-4">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Your Answer</th>
+                <th>Correct Answer</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for answer in answers %}
+            <tr>
+                <td>{{ answer.question.question_text }}</td>
+                <td>
+                    {{ answer.selected_option }}.
+                    {% if answer.selected_option == 'A' %}
+                        {{ answer.question.option_a }}
+                    {% elif answer.selected_option == 'B' %}
+                        {{ answer.question.option_b }}
+                    {% elif answer.selected_option == 'C' %}
+                        {{ answer.question.option_c }}
+                    {% elif answer.selected_option == 'D' %}
+                        {{ answer.question.option_d }}
+                    {% elif answer.selected_option == 'T' %}
+                        True
+                    {% elif answer.selected_option == 'F' %}
+                        False
+                    {% endif %}
+                </td>
+                <td>
+                    {{ answer.question.correct_answer }}.
+                    {% if answer.question.correct_answer == 'A' %}
+                        {{ answer.question.option_a }}
+                    {% elif answer.question.correct_answer == 'B' %}
+                        {{ answer.question.option_b }}
+                    {% elif answer.question.correct_answer == 'C' %}
+                        {{ answer.question.option_c }}
+                    {% elif answer.question.correct_answer == 'D' %}
+                        {{ answer.question.option_d }}
+                    {% elif answer.question.correct_answer == 'T' %}
+                        True
+                    {% elif answer.question.correct_answer == 'F' %}
+                        False
+                    {% endif %}
+                </td>
+                <td>
+                    {% if answer.is_correct %}
+                        <span class="badge badge-success">Correct</span>
+                    {% else %}
+                        <span class="badge badge-danger">Incorrect</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'history' %}" class="btn btn-secondary">Back to History</a>
+</div>
+{% endblock %}

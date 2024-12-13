@@ -1,0 +1,83 @@
+<!-- quiz/templates/quiz/home.html -->
+
+{% extends 'quiz/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Welcome, {{ user.username }}!</h2>
+    <div class="mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Quiz Sessions</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ total_sessions }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Correct Answers</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ total_correct }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-header">Incorrect Answers</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ total_incorrect }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visualization -->
+    <div class="mt-5">
+        <h3>Quiz Sessions Overview</h3>
+        <canvas id="quizChart"></canvas>
+    </div>
+
+    <div class="mt-5">
+        <a href="{% url 'start_quiz' %}" class="btn btn-primary">Start New Quiz</a>
+        <a href="{% url 'history' %}" class="btn btn-secondary">History</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger float-right">Logout</a>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartData = {{ chart_data|safe }};
+    const ctx = document.getElementById('quizChart').getContext('2d');
+    const quizChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: [
+                {
+                    label: 'Correct',
+                    data: chartData.correct,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                },
+                {
+                    label: 'Incorrect',
+                    data: chartData.incorrect,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    precision:0
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
