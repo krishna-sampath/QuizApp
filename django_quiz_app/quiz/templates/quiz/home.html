@@ -1,5 +1,3 @@
-<!-- quiz/templates/quiz/home.html -->
-
 {% extends 'quiz/base.html' %}
 {% load crispy_forms_tags %}
 
@@ -51,7 +49,8 @@
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const chartData = {{ chart_data|safe }};
+    const chartData = JSON.parse('{{ chart_data|safe }}');
+    
     const ctx = document.getElementById('quizChart').getContext('2d');
     const quizChart = new Chart(ctx, {
         type: 'bar',
@@ -73,8 +72,7 @@
         options: {
             scales: {
                 y: {
-                    beginAtZero: true,
-                    precision:0
+                    beginAtZero: true
                 }
             }
         }
