@@ -137,3 +137,5 @@ LOGOUT_REDIRECT_URL = 'login'
 # quiz_project/settings.py
 
 LOGIN_URL = '/login/'  # Ensure this matches the login URL
+
+ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1']
