@@ -36,6 +36,7 @@
                         False
                     {% endif %}
                 </td>
+                
                 <td>
                     {{ answer.question.correct_answer }}.
                     {% if answer.question.correct_answer == 'A' %}
@@ -52,6 +53,7 @@
                         False
                     {% endif %}
                 </td>
+                
                 <td>
                     {% if answer.is_correct %}
                         <span class="badge badge-success">Correct</span>

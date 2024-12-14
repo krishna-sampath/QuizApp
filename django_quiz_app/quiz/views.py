@@ -9,6 +9,9 @@ from django.contrib.auth.decorators import login_required
 from .models import QuizSession, UserAnswer, QuizQuestion
 from django.db.models import Count, Q
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def signup_view(request):
     if request.method == 'POST':
@@ -119,38 +122,47 @@ def submit_answer(request, session_id):
     if request.method == 'POST':
         session = get_object_or_404(QuizSession, id=session_id, user=request.user, completed=False)
         question_id = request.POST.get('question_id')
-        selected_option = request.POST.get('selected_option')
+        selected_option = request.POST.get('selected_option')  # 'A', 'B', etc.
 
         question = get_object_or_404(QuizQuestion, id=question_id)
-        is_correct = selected_option.strip().upper() == question.correct_answer.strip().upper()
 
-        # Save the answer
+        # Normalize comparison for correctness
+        correct_option = question.correct_answer.strip().upper()  # Letter (e.g., 'A', 'B')
+        selected_option = selected_option.strip().upper()  # Letter (e.g., 'A', 'B')
+
+        is_correct = selected_option == correct_option
+
+        # Save the user's answer
         UserAnswer.objects.create(
             quiz_session=session,
             question=question,
-            selected_option=selected_option.strip().upper(),
+            selected_option=selected_option,
             is_correct=is_correct
         )
 
-        # After saving, check if we've reached 10 questions
+        # Check if we've answered 10 questions
         total_answered = session.answers.count()
         if total_answered >= 10:
             session.completed = True
             session.save()
             return redirect('submit_quiz', session_id=session.id)
 
-        # Otherwise, continue with the quiz
+        # Continue to next question
         return redirect('take_quiz', session_id=session.id)
     else:
         return redirect('home')
 
 @login_required
 def submit_quiz(request, session_id):
-    session = get_object_or_404(QuizSession, id=session_id, user=request.user, completed=False)
-    session.completed = True
-    session.save()
+    # Now that we are submitting the quiz, the session should be completed
+    # So do not filter by completed=False here
+    session = get_object_or_404(QuizSession, id=session_id, user=request.user)
+    
+    # If you haven't set it to completed yet, do it here if needed:
+    if not session.completed:
+        session.completed = True
+        session.save()
 
-    # Calculate summary data
     total_correct = session.answers.filter(is_correct=True).count()
     total_incorrect = session.answers.filter(is_correct=False).count()
 
@@ -158,6 +170,7 @@ def submit_quiz(request, session_id):
         'total_correct': total_correct,
         'total_incorrect': total_incorrect
     })
+
 
 @login_required
 def history(request):
